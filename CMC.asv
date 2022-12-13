@@ -1,6 +1,6 @@
-% “Áƒvƒ@‰Û‘è‡A
+% ç‰¹ãƒ—ãƒ­ã€€èª²é¡Œâ‘¡
 % start from 2022/03  
-%@‰½ƒ`ƒƒƒ“ƒlƒ‹‚É‰½‚Ìƒf[ƒ^‚ª“ü‚Á‚Ä‚¢‚é‚©‚ğ•K‚¸Šm”F‚·‚é‚±‚Æ
+%ã€€ä½•ãƒãƒ£ãƒ³ãƒãƒ«ã«ä½•ã®ãƒ‡ãƒ¼ã‚¿ãŒå…¥ã£ã¦ã„ã‚‹ã‹ã‚’å¿…ãšç¢ºèªã™ã‚‹ã“ã¨
 % ch1 = Torque
 % ch2 = EMG 
 % ch3 = EEG Cz
@@ -9,7 +9,7 @@
 % ch6 = EEG CPz
 % ch7 = EEG C2
 
-% ch1:Torque ch2~6:EEG(ch2‚ªCz) ch7.8:EMG
+% ch1:Torque ch2~6:EEG(ch2ãŒCz) ch7.8:EMG
 
 % EMG LP = 500 Hz, HP = 5 Hz
 % EEG LP = 200 Hz, HP = 0.5 Hz
@@ -17,28 +17,28 @@
 % EMG Sens HI (x1000)
 % EEG Sens Low (x1000)
 
-%”íŒ±Ò–¼
+%è¢«é¨“è€…å
 defaultanswer = {'egashira'};
 subject = inputdlg({'subject'},'Input the answer',1,defaultanswer);
 subject_name = char(subject(1));
 
-%ƒTƒ“ƒvƒŠƒ“ƒOü”g”
+%ã‚µãƒ³ãƒ—ãƒªãƒ³ã‚°å‘¨æ³¢æ•°
 fs = 1000;
-%‘‹’·
+%çª“é•·
 nfft = 1000;
-%ƒt[ƒŠƒG•ÏŠ·‚ÌOverlap—¦‚ğw’èiƒRƒq[ƒŒƒ“ƒXŒvZ‚Ìê‡‚ÍŠî–{0j
+%ãƒ•ãƒ¼ãƒªã‚¨å¤‰æ›æ™‚ã®Overlapç‡ã‚’æŒ‡å®šï¼ˆã‚³ãƒ’ãƒ¼ãƒ¬ãƒ³ã‚¹è¨ˆç®—ã®å ´åˆã¯åŸºæœ¬0ï¼‰
 Overlap = 0;
 
-%‰ğÍ‚·‚éƒf[ƒ^imatƒtƒ@ƒCƒ‹j‚ğ‘I‘ğ‚µA“Ç‚İ‚Ş
-[fname,pname]=uigetfile('*.mat','‰ğÍ‚·‚éƒf[ƒ^‚ğ‘I‘ğ‚µ‚Ä‚­‚¾‚³‚¢');
+%è§£æã™ã‚‹ãƒ‡ãƒ¼ã‚¿ï¼ˆmatãƒ•ã‚¡ã‚¤ãƒ«ï¼‰ã‚’é¸æŠã—ã€èª­ã¿è¾¼ã‚€
+[fname,pname]=uigetfile('*.mat','è§£æã™ã‚‹ãƒ‡ãƒ¼ã‚¿ã‚’é¸æŠã—ã¦ãã ã•ã„');
   FP=[fname pname];
   if fname==0;return;end
-   %fname‚ªƒtƒ@ƒCƒ‹–¼^pname‚Íƒtƒ@ƒCƒ‹‚Ì‚ ‚éêŠiƒfƒBƒŒƒNƒgƒŠj
+   %fnameãŒãƒ•ã‚¡ã‚¤ãƒ«åï¼pnameã¯ãƒ•ã‚¡ã‚¤ãƒ«ã®ã‚ã‚‹å ´æ‰€ï¼ˆãƒ‡ã‚£ãƒ¬ã‚¯ãƒˆãƒªï¼‰
    load([pname fname]);
 
 
-%ƒtƒBƒ‹ƒ^ƒŠƒ“ƒO
-%y‰Û‘è‡AzEEG/EMG‚»‚ê‚¼‚ê‚Ì¶”gŒ`‚ğŒ©‚ÄA•K—v‚Å‚ ‚ê‚Îƒnƒ€ƒJƒbƒgƒtƒBƒ‹ƒ^‚È‚Ç‚Ìˆ—‚ğ‚µ‚Ä‚İ‚æ‚¤
+%ãƒ•ã‚£ãƒ«ã‚¿ãƒªãƒ³ã‚°
+%ã€èª²é¡Œâ‘¡ã€‘EEG/EMGãã‚Œãã‚Œã®ç”Ÿæ³¢å½¢ã‚’è¦‹ã¦ã€å¿…è¦ã§ã‚ã‚Œã°ãƒãƒ ã‚«ãƒƒãƒˆãƒ•ã‚£ãƒ«ã‚¿ãªã©ã®å‡¦ç†ã‚’ã—ã¦ã¿ã‚ˆã†
 data_filtered = data;
 [b50,a50] = butter(3,[49 51]/500,'stop');
 [b100,a100] = butter(3,[99 101]/500,'stop');
@@ -60,9 +60,9 @@ data_filtered = filtfilt(b400,a400,data_filtered);
 data_filtered = filtfilt(b450,a450,data_filtered);
 
 
-%Œv‘ªƒf[ƒ^‚Ì’è‹`
-%EMG‚Í1000ƒÊV¨1V‚È‚Ì‚ÅAƒ}ƒCƒNƒƒ{ƒ‹ƒg’PˆÊ‚É•ÏŠ·i1000”{j
-%EMG‚Í100ƒÊV¨1V‚È‚Ì‚ÅAƒ}ƒCƒNƒƒ{ƒ‹ƒg’PˆÊ‚É•ÏŠ·i100”{j
+%è¨ˆæ¸¬ãƒ‡ãƒ¼ã‚¿ã®å®šç¾©
+%EMGã¯1000Î¼Vâ†’1Vãªã®ã§ã€ãƒã‚¤ã‚¯ãƒ­ãƒœãƒ«ãƒˆå˜ä½ã«å¤‰æ›ï¼ˆ1000å€ï¼‰
+%EMGã¯100Î¼Vâ†’1Vãªã®ã§ã€ãƒã‚¤ã‚¯ãƒ­ãƒœãƒ«ãƒˆå˜ä½ã«å¤‰æ›ï¼ˆ100å€ï¼‰
 Force = data_filtered(:,1);
 EMG = data_filtered(:,7)*1000;
 EEG_Cz = data_filtered(:,2)*100;
@@ -72,13 +72,13 @@ EEG_CPz = data_filtered(:,5)*100;
 EEG_C2 = data_filtered(:,6)*100;
  
 
-%EMG‚ÌƒgƒŒƒ“ƒhœ‹i•½‹Ï‚ğˆø‚­j
+%EMGã®ãƒˆãƒ¬ãƒ³ãƒ‰é™¤å»ï¼ˆå¹³å‡ã‚’å¼•ãï¼‰
 EMG = (EMG-mean(EMG))*1000;
-%‘S”g®—¬
+%å…¨æ³¢æ•´æµ
 rEMG = abs(EMG);
 
-%EEG‚ÌƒgƒŒƒ“ƒhœ‹idetrendŠÖ”‚ğ—p‚¢‚éj
-%y‰Û‘è‡@zdetrend‚ğ—p‚¢‚Ä‚»‚ê‚¼‚ê‚Ìchƒf[ƒ^‚ÌƒgƒŒƒ“ƒhœ‹‚ğ‚µ‚Ä‚İ‚æ‚¤^detrend‘OŒã‚ÌƒVƒOƒiƒ‹‚ğ”äŠr‚µ‚Ä‚İ‚æ‚¤
+%EEGã®ãƒˆãƒ¬ãƒ³ãƒ‰é™¤å»ï¼ˆdetrendé–¢æ•°ã‚’ç”¨ã„ã‚‹ï¼‰
+%ã€èª²é¡Œâ‘ ã€‘detrendã‚’ç”¨ã„ã¦ãã‚Œãã‚Œã®chãƒ‡ãƒ¼ã‚¿ã®ãƒˆãƒ¬ãƒ³ãƒ‰é™¤å»ã‚’ã—ã¦ã¿ã‚ˆã†ï¼detrendå‰å¾Œã®ã‚·ã‚°ãƒŠãƒ«ã‚’æ¯”è¼ƒã—ã¦ã¿ã‚ˆã†
 dEEG_Cz = detrend(EEG_Cz);
 dEEG_FCz = detrend(EEG_FCz);
 dEEG_C1 = detrend(EEG_C1);
@@ -86,16 +86,16 @@ dEEG_CPz = detrend(EEG_CPz);
 dEEG_C2 = detrend(EEG_C2);
 
 
-%ƒ‰ƒvƒ‰ƒVƒAƒ““±o
-%Cz‚Ì”]”g‚©‚çc‚è4ch‚Ì”]”g‚Ì•½‹Ï‚ğ‚Ğ‚­
+%ãƒ©ãƒ—ãƒ©ã‚·ã‚¢ãƒ³å°å‡º
+%Czã®è„³æ³¢ã‹ã‚‰æ®‹ã‚Š4chã®è„³æ³¢ã®å¹³å‡ã‚’ã²ã
 EEG = dEEG_Cz - (dEEG_FCz + dEEG_CPz + dEEG_C1 + dEEG_C2) / 4;
 %EEG = EEG_Cz - (EEG_FCz + EEG_CPz + EEG_C1 + EEG_C2) / 4;
 
-%ŠÔs—ñ‚ğì¬
+%æ™‚é–“è¡Œåˆ—ã‚’ä½œæˆ
 time = 0:1 / fs:length(Force) / fs-1/fs;
 
 figure('Position',[1 1 500 700]);
-subplot(3,1,1) %subplot(m,n,p):Œ»İ‚ÌFigure‚ğmsn—ñ‚ÌƒOƒŠƒbƒh‚É•ªŠ„‚µAp‚Åw’è‚³‚ê‚½ˆÊ’u‚É}¦
+subplot(3,1,1) %subplot(m,n,p):ç¾åœ¨ã®Figureã‚’mè¡Œnåˆ—ã®ã‚°ãƒªãƒƒãƒ‰ã«åˆ†å‰²ã—ã€pã§æŒ‡å®šã•ã‚ŒãŸä½ç½®ã«å›³ç¤º
 plot(time,Force);
 ylabel('Force (V)','FontName','Arial','Fontsize',12);
 xlabel('time (s)','FontName','Arial','Fontsize',12);
@@ -110,55 +110,55 @@ plot(time,EEG);
 ylabel('EEG (\muV)','FontName','Arial','Fontsize',12);
 xlabel('time (s)','FontName','Arial','Fontsize',12);
  
-%figure‚ğ•Â‚¶‚é‚Ü‚ÅƒvƒƒOƒ‰ƒ€‚ªˆê’â~
+%figureã‚’é–‰ã˜ã‚‹ã¾ã§ãƒ—ãƒ­ã‚°ãƒ©ãƒ ãŒä¸€æ™‚åœæ­¢
 uiwait;
 
-%‰ğÍ‘ÎÛ‹æŠÔ‚ğİ’èi‰ğÍ‚Ì‚½‚ß‚Ì60•b‚ğ‘I’èj
+%è§£æå¯¾è±¡åŒºé–“ã‚’è¨­å®šï¼ˆè§£æã®ãŸã‚ã®60ç§’ã‚’é¸å®šï¼‰
 defaultanswer = {'15','75'};
-startend = inputdlg({'start','end'},'‰ğÍ‹æŠÔ‚Ì60•b‚ğİ’è‚µ‚Ä‚­‚¾‚³‚¢',1,defaultanswer);
+startend = inputdlg({'start','end'},'è§£æåŒºé–“ã®60ç§’ã‚’è¨­å®šã—ã¦ãã ã•ã„',1,defaultanswer);
 start_time = str2num(char(startend(1)));
 end_time = str2num(char(startend(2)));
 
-%‰ğÍ‘ÎÛ‹æŠÔ‚Ì60•b•ª‚Ìƒf[ƒ^‚ğØ‚èo‚µ
+%è§£æå¯¾è±¡åŒºé–“ã®60ç§’åˆ†ã®ãƒ‡ãƒ¼ã‚¿ã‚’åˆ‡ã‚Šå‡ºã—
 Force = Force(start_time*fs+1:end_time*fs);
 rEMG = rEMG(start_time*fs+1:end_time*fs);
 EEG = EEG(start_time*fs+1:end_time*fs);
 
-%ƒRƒq[ƒŒƒ“ƒX‰ğÍ
+%ã‚³ãƒ’ãƒ¼ãƒ¬ãƒ³ã‚¹è§£æ
 [Coh,F] = mscohere(EEG,rEMG,hanning(nfft),Overlap,nfft,fs);
 
-%ƒRƒq[ƒŒƒ“ƒX‚Ì—LˆÓ…€ŒvZ(ƒ{ƒ“ƒtƒFƒ[ƒj•â³—Lj
-%ü”g”•ª‰ğ”\
+%ã‚³ãƒ’ãƒ¼ãƒ¬ãƒ³ã‚¹ã®æœ‰æ„æ°´æº–è¨ˆç®—(ãƒœãƒ³ãƒ•ã‚§ãƒ­ãƒ¼ãƒ‹è£œæ­£æœ‰ï¼‰
+%å‘¨æ³¢æ•°åˆ†è§£èƒ½
 freq_resol = fs/nfft;
-%‰ğÍ‘ÎÛ‚Í3-50Hz‚Æ‚·‚é
-f_3 = 1+floor(3/freq_resol);%‰ğÍ‘ÎÛ‚Ì‰ºŒÀü”g”...‚±‚±‚Å“±‚«o‚³‚ê‚é‰ğ”Ô–Ú‚ÌFs—ñ‚Ì”’l‚ªA3‚É‚à‚Á‚Æ‚à‹ß‚¢‚±‚Æ‚ğŠm”F
-f_50 = 1+floor(50/freq_resol);%‰ğÍ‘ÎÛ‚ÌãŒÀü”g”...‚±‚±‚Å“±‚«o‚³‚ê‚é‰ğ”Ô–Ú‚ÌFs—ñ‚Ì”’l‚ªA50‚É‚à‚Á‚Æ‚à‹ß‚¢‚±‚Æ‚ğŠm”F
-%‰ğÍ‘‹”‚ÌZoi‰ğÍ‹æŠÔ‚Ìƒf[ƒ^‚©‚ç‘‹’·nfft‚Ìƒf[ƒ^‘‹‚ª‰½ŒÂ“¾‚ç‚ê‚é‚©Hj
+%è§£æå¯¾è±¡ã¯3-50Hzã¨ã™ã‚‹
+f_3 = 1+floor(3/freq_resol);%è§£æå¯¾è±¡ã®ä¸‹é™å‘¨æ³¢æ•°...ã“ã“ã§å°ãå‡ºã•ã‚Œã‚‹è§£ç•ªç›®ã®Fè¡Œåˆ—ã®æ•°å€¤ãŒã€3ã«ã‚‚ã£ã¨ã‚‚è¿‘ã„ã“ã¨ã‚’ç¢ºèª
+f_50 = 1+floor(50/freq_resol);%è§£æå¯¾è±¡ã®ä¸Šé™å‘¨æ³¢æ•°...ã“ã“ã§å°ãå‡ºã•ã‚Œã‚‹è§£ç•ªç›®ã®Fè¡Œåˆ—ã®æ•°å€¤ãŒã€50ã«ã‚‚ã£ã¨ã‚‚è¿‘ã„ã“ã¨ã‚’ç¢ºèª
+%è§£æçª“æ•°ã®ç®—å‡ºï¼ˆè§£æåŒºé–“ã®ãƒ‡ãƒ¼ã‚¿ã‹ã‚‰çª“é•·nfftã®ãƒ‡ãƒ¼ã‚¿çª“ãŒä½•å€‹å¾—ã‚‰ã‚Œã‚‹ã‹ï¼Ÿï¼‰
 num_window = floor(length(Force)/nfft);
 
-%y‰Û‘è‡BzUshiyama et al., J Neurophysiol 2011‚Ì˜_•¶‚É‚ ‚é—LˆÓ…€‚Ì®‚ğŠm”F
+%ã€èª²é¡Œâ‘¢ã€‘Ushiyama et al., J Neurophysiol 2011ã®è«–æ–‡ã«ã‚ã‚‹æœ‰æ„æ°´æº–ã®å¼ã‚’ç¢ºèª
 SL=1-(0.05/((f_50-f_3)+1))^(1/(num_window-1));
 
-%CMC‚Ì’è—Ê•]‰¿
-%y‰Û‘è‡Cz15-35Hz‚Ìƒx[ƒ^‘Ñ‚É‚¨‚¯‚éCMC‚ÌÅ‘å’liCMCmaxj/‚»‚Ìü”g”iPFj‚ğ‹‚ß‚é
-C = Coh(151:350); %”z—ñ‚Ì150”Ô–Ú‚©‚ç350”Ô–Ú‚Ü‚Å”²‚«o‚·
+%CMCã®å®šé‡è©•ä¾¡
+%ã€èª²é¡Œâ‘£ã€‘15-35Hzã®ãƒ™ãƒ¼ã‚¿å¸¯ã«ãŠã‘ã‚‹CMCã®æœ€å¤§å€¤ï¼ˆCMCmaxï¼‰/ãã®å‘¨æ³¢æ•°ï¼ˆPFï¼‰ã‚’æ±‚ã‚ã‚‹
+C = Coh(151:350); %é…åˆ—ã®150ç•ªç›®ã‹ã‚‰350ç•ªç›®ã¾ã§æŠœãå‡ºã™
 [CMCmax,pf] = max(C);
 PF = (pf + 150) / 10;
 
-%y‰Û‘è‡Dz15-35Hz‚Ìƒx[ƒ^‘Ñ‚É‚¨‚¯‚éCMC‚Ì–ÊÏiCMCareaj‚ğ‹‚ß‚é
+%ã€èª²é¡Œâ‘¤ã€‘15-35Hzã®ãƒ™ãƒ¼ã‚¿å¸¯ã«ãŠã‘ã‚‹CMCã®é¢ç©ï¼ˆCMCareaï¼‰ã‚’æ±‚ã‚ã‚‹
 CMCarea = sum(C);
 
 
-%CMC‚Ì•`‰æ
+%CMCã®æç”»
 figure1 = figure('Position',[1 1 500 500]);
 area(F,Coh);
 hold on;
-%—LˆÓü‚ğƒOƒ‰ƒt“à‚É•`‰æ
+%æœ‰æ„ç·šã‚’ã‚°ãƒ©ãƒ•å†…ã«æç”»
 plot(linspace(0,fs/2,length(time)),repmat(SL,1,length(time)),'r','LineWidth',0.5);
 hold off;
-xlim([0,50]);%50Hz‚Ü‚Å•`‰æ
-ylim([0,0.6]);%ãŒÀ‚Í“¾‚ç‚ê‚½ƒf[ƒ^‚É‚æ‚Á‚Ä“K‹XC³
-yticks(0:0.1:0.6);
+xlim([0,50]);%50Hzã¾ã§æç”»
+ylim([0,0.5]);%ä¸Šé™ã¯å¾—ã‚‰ã‚ŒãŸãƒ‡ãƒ¼ã‚¿ã«ã‚ˆã£ã¦é©å®œä¿®æ­£
+yticks(0:0.1:0.5);
 xlabel('Frequency(Hz)','FontName','Arial','Fontsize',15);
 ylabel('Coherence','FontName','Arial','Fontsize',15);
 title('CMC','FontName','Arial','Fontsize',25)
@@ -166,16 +166,16 @@ title('CMC','FontName','Arial','Fontsize',25)
 
 
 
-%y‰Û‘è‡EzpwelchŠÖ”‚ğ—p‚¢‚ÄEEG‚ÆrEMG‚Ì‚»‚ê‚¼‚ê‚Ìƒpƒ[ƒXƒyƒNƒgƒ‹‚ğŒvZ‚·‚é
+%ã€èª²é¡Œâ‘¥ã€‘pwelché–¢æ•°ã‚’ç”¨ã„ã¦EEGã¨rEMGã®ãã‚Œãã‚Œã®ãƒ‘ãƒ¯ãƒ¼ã‚¹ãƒšã‚¯ãƒˆãƒ«ã‚’è¨ˆç®—ã™ã‚‹
 
 
 
-%y‰Û‘è‡Fz“¾‚ç‚ê‚½EEG‚ÆEMG‚ÌƒXƒyƒNƒgƒ‹‚ğ•`‰æ‚µ‚ÄACMCƒXƒyƒNƒgƒ‹‚Æ”äŠr‚µ‚Ä‚İ‚é
+%ã€èª²é¡Œâ‘¦ã€‘å¾—ã‚‰ã‚ŒãŸEEGã¨EMGã®ã‚¹ãƒšã‚¯ãƒˆãƒ«ã‚’æç”»ã—ã¦ã€CMCã‚¹ãƒšã‚¯ãƒˆãƒ«ã¨æ¯”è¼ƒã—ã¦ã¿ã‚‹
 
 
 
 
-% %ƒtƒ@ƒCƒ‹‚Ì•Û‘¶
+% %ãƒ•ã‚¡ã‚¤ãƒ«ã®ä¿å­˜
 % output_filename = sprintf('%s_CMC',subject_name);
 % save(output_filename,'F','PEEG','PEMG','Coh');
 
