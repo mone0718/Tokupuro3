@@ -18,7 +18,7 @@
 % EEG Sens Low (x1000)
 
 %被験者名
-defaultanswer = {'egashira'};
+defaultanswer = {'Egashira'};
 subject = inputdlg({'subject'},'Input the answer',1,defaultanswer);
 subject_name = char(subject(1));
 
@@ -62,9 +62,9 @@ data_filtered = filtfilt(b450,a450,data_filtered);
 
 %計測データの定義
 %EMGは1000μV→1Vなので、マイクロボルト単位に変換（1000倍）
-%EMGは100μV→1Vなので、マイクロボルト単位に変換（100倍）
+%EEGは100μV→1Vなので、マイクロボルト単位に変換（100倍）
 Force = data_filtered(:,1);
-EMG = data_filtered(:,7)*1000;
+EMG = data_filtered(:,7); %ここの*1000
 EEG_Cz = data_filtered(:,2)*100;
 EEG_FCz = data_filtered(:,3)*100;
 EEG_C1 = data_filtered(:,4)*100;
@@ -85,27 +85,32 @@ dEEG_C1 = detrend(EEG_C1);
 dEEG_CPz = detrend(EEG_CPz);
 dEEG_C2 = detrend(EEG_C2);
 
-
 %ラプラシアン導出
 %Czの脳波から残り4chの脳波の平均をひく
 EEG = dEEG_Cz - (dEEG_FCz + dEEG_CPz + dEEG_C1 + dEEG_C2) / 4;
 %EEG = EEG_Cz - (EEG_FCz + EEG_CPz + EEG_C1 + EEG_C2) / 4;
 
-%時間行列を作成
-time = 0:1 / fs:length(Force) / fs-1/fs;
 
-figure('Position',[1 1 500 700]);
-subplot(3,1,1) %subplot(m,n,p):現在のFigureをm行n列のグリッドに分割し、pで指定された位置に図示
+%時間行列を作成
+time = 0:1/fs:length(Force)/fs-1/fs;
+
+figure('Position',[1 1 400 700]);
+subplot(3,1,1); %subplot(m,n,p):現在のFigureをm行n列のグリッドに分割し、pで指定された位置に図示
 plot(time,Force);
 ylabel('Force (V)','FontName','Arial','Fontsize',12);
 xlabel('time (s)','FontName','Arial','Fontsize',12);
 
-subplot(3,1,2)
+% subplot(4,1,2);
+% plot(time,EMG);
+% ylabel('rEMG (\muV)','FontName','Arial','Fontsize',12);
+% xlabel('time (s)','FontName','Arial','Fontsize',12);
+
+subplot(3,1,2);
 plot(time,rEMG);
 ylabel('EMG (\muV)','FontName','Arial','Fontsize',12);
 xlabel('time (s)','FontName','Arial','Fontsize',12);
 
-subplot(3,1,3)
+subplot(3,1,3);
 plot(time,EEG);
 ylabel('EEG (\muV)','FontName','Arial','Fontsize',12);
 xlabel('time (s)','FontName','Arial','Fontsize',12);
@@ -150,33 +155,49 @@ CMCarea = sum(C);
 
 
 %CMCの描画
-figure1 = figure('Position',[1 1 500 500]);
+figure1 = figure('Position',[1 1 400 700]);
+subplot(3,1,1);
 area(F,Coh);
-hold on;
 %有意線をグラフ内に描画
+hold on;
 plot(linspace(0,fs/2,length(time)),repmat(SL,1,length(time)),'r','LineWidth',0.5);
 hold off;
 xlim([0,50]);%50Hzまで描画
 ylim([0,0.6]);%上限は得られたデータによって適宜修正
 yticks(0:0.1:0.6);
-xlabel('Frequency(Hz)','FontName','Arial','Fontsize',15);
-ylabel('Coherence','FontName','Arial','Fontsize',15);
-title('CMC','FontName','Arial','Fontsize',25)
-
+xlabel('Frequency(Hz)','FontName','Arial','Fontsize',12);
+ylabel('Coherence','FontName','Arial','Fontsize',12);
+title('CMC','FontName','Arial','Fontsize',20)
 
 
 
 %【課題⑥】pwelch関数を用いてEEGとrEMGのそれぞれのパワースペクトルを計算する
-
+pEEG = pwelch(EEG,hanning(nfft),Overlap,nfft,fs);
+pEMG = pwelch(rEMG,hanning(nfft),Overlap,nfft,fs);
 
 
 %【課題⑦】得られたEEGとEMGのスペクトルを描画して、CMCスペクトルと比較してみる
+subplot(3,1,2);
+plot(F,pEEG,'LineWidth',1);
+xlim([0,50]);
+ylim([0,0.16]);
+xlabel('Frequency(Hz)','FontName','Arial','Fontsize',12);
+ylabel('EEG PSD (\muV^2/Hz)','FontName','Arial','Fontsize',12);
+
+subplot(3,1,3);
+plot(F,pEMG,'LineWidth',1);
+xlim([0,50]);
+ylim([0,600]);
+xlabel('Frequency(Hz)','FontName','Arial','Fontsize',12);
+ylabel('EMG PSD (\muV^2/Hz)','FontName','Arial','Fontsize',12);
 
 
+%ファイルの保存
+output_filename = sprintf('%s_CMC',subject_name);
+save(output_filename,'F','pEEG','pEMG','Coh',"CMCmax","CMCarea","PF");
 
-
-% %ファイルの保存
-% output_filename = sprintf('%s_CMC',subject_name);
-% save(output_filename,'F','PEEG','PEMG','Coh');
+%Figure ファイルの保存
+output_figname = sprintf('%s_CMC',subject_name);
+saveas(figure1,output_figname,'fig');
 
 
