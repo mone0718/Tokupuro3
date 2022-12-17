@@ -36,7 +36,6 @@ Overlap = 0;
    %fnameがファイル名／pnameはファイルのある場所（ディレクトリ）
    load([pname fname]);
 
-
 %フィルタリング
 %【課題②】EEG/EMGそれぞれの生波形を見て、必要であればハムカットフィルタなどの処理をしてみよう
 data_filtered = data;
@@ -95,24 +94,24 @@ EEG = dEEG_Cz - (dEEG_FCz + dEEG_CPz + dEEG_C1 + dEEG_C2) / 4;
 time = 0:1/fs:length(Force)/fs-1/fs;
 
 figure('Position',[1 1 400 700]);
-subplot(3,1,1); %subplot(m,n,p):現在のFigureをm行n列のグリッドに分割し、pで指定された位置に図示
+subplot(4,1,1); %subplot(m,n,p):現在のFigureをm行n列のグリッドに分割し、pで指定された位置に図示
 plot(time,Force);
 ylabel('Force (V)','FontName','Arial','Fontsize',12);
 xlabel('time (s)','FontName','Arial','Fontsize',12);
 
-% subplot(4,1,2);
-% plot(time,EMG);
-% ylabel('rEMG (\muV)','FontName','Arial','Fontsize',12);
-% xlabel('time (s)','FontName','Arial','Fontsize',12);
+subplot(4,1,2);
+plot(time,EMG,'LineWidth',1.5);
+ylabel('rEMG (\muV)','FontName','Arial','Fontsize',12);
+xlabel('time (s)','FontName','Arial','Fontsize',12);
 
-subplot(3,1,2);
+subplot(4,1,3);
 plot(time,rEMG);
 ylabel('EMG (\muV)','FontName','Arial','Fontsize',12);
 xlabel('time (s)','FontName','Arial','Fontsize',12);
 
-subplot(3,1,3);
-plot(time,EEG);
-ylabel('EEG (\muV)','FontName','Arial','Fontsize',12);
+subplot(4,1,4);
+plot(time,EEG,'LineWidth',1.5);
+ylabel('EEG (\muV)','FontName','Arial','Fontsize',12,'LineWidth',2);
 xlabel('time (s)','FontName','Arial','Fontsize',12);
  
 %figureを閉じるまでプログラムが一時停止
@@ -146,13 +145,12 @@ SL=1-(0.05/((f_50-f_3)+1))^(1/(num_window-1));
 
 %CMCの定量評価
 %【課題④】15-35Hzのベータ帯におけるCMCの最大値（CMCmax）/その周波数（PF）を求める
-C = Coh(151:350); %配列の150番目から350番目まで抜き出す
+C = Coh(15:35); %配列の15番目から35番目まで抜き出す
 [CMCmax,pf] = max(C);
-PF = (pf + 150) / 10;
+PF = pf + 13;
 
 %【課題⑤】15-35Hzのベータ帯におけるCMCの面積（CMCarea）を求める
 CMCarea = sum(C);
-
 
 %CMCの描画
 figure1 = figure('Position',[1 1 400 700]);
@@ -196,7 +194,13 @@ ylabel('EMG PSD (\muV^2/Hz)','FontName','Arial','Fontsize',12);
 output_filename = sprintf('%s_CMC',subject_name);
 save(output_filename,'F','pEEG','pEMG','Coh',"CMCmax","CMCarea","PF");
 
-%Figure ファイルの保存
+fileName = "result.txt";
+fileID = fopen(fileName, 'a'); %w:上書き a:末尾に追加
+
+% %s:str型のデータ %f:浮動小数点
+fprintf(fileID, '%s CMCmax: %0.4f, PF: %2.0f, CMCarea: %0.4f\n', subject_name, CMCmax, PF, CMCarea);
+
+%Figureの保存
 output_figname = sprintf('%s_CMC',subject_name);
 saveas(figure1,output_figname,'fig');
 

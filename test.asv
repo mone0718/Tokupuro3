@@ -1,0 +1,7 @@
+subject_name = "Fujita";
+
+fileName = strcat(subject_name, "_result.txt");
+fileID = fopen(fileName, 'w');
+
+%fprintf(fileID, 'CMCmax: %0.4f\n', 'CMCmax');
+fprintf(fileID, 'PF: %2.0f\n', PF);
