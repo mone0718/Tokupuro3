@@ -1,0 +1,5 @@
+Egashira  CMCmax: 0.0649, PF: 14, CMCarea: 0.3376
+Fujita    CMCmax: 0.4789, PF: 25, CMCarea: 3.8105
+Sakaguchi CMCmax: 0.5055, PF: 23, CMCarea: 3.2265
+Takeuchi  CMCmax: 0.0517, PF: 15, CMCarea: 0.3333
+Yokota    CMCmax: 0.0666, PF: 33, CMCarea: 0.2933

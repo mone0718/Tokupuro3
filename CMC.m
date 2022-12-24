@@ -39,36 +39,27 @@ Overlap = 0;
 %フィルタリング
 %【課題②】EEG/EMGそれぞれの生波形を見て、必要であればハムカットフィルタなどの処理をしてみよう
 data_filtered = data;
-[b50,a50] = butter(3,[49 51]/500,'stop');
-[b100,a100] = butter(3,[99 101]/500,'stop');
-[b150,a150] = butter(3,[149 151]/500,'stop');
-[b200,a200] = butter(3,[199 201]/500,'stop');
-[b250,a250] = butter(3,[249 251]/500,'stop');
-[b300,a300] = butter(3,[299 301]/500,'stop');
-[b350,a350] = butter(3,[349 351]/500,'stop');
-[b400,a400] = butter(3,[399 401]/500,'stop');
-[b450,a450] = butter(3,[449 451]/500,'stop');
-data_filtered = filtfilt(b50,a50,data_filtered);
-data_filtered = filtfilt(b100,a100,data_filtered);
-data_filtered = filtfilt(b150,a150,data_filtered);
-data_filtered = filtfilt(b200,a200,data_filtered);
-data_filtered = filtfilt(b250,a250,data_filtered);
-data_filtered = filtfilt(b300,a300,data_filtered);
-data_filtered = filtfilt(b350,a350,data_filtered);
-data_filtered = filtfilt(b400,a400,data_filtered);
-data_filtered = filtfilt(b450,a450,data_filtered);
+a = zeros(9,7); %9行7列の全要素0の行列
+b = zeros(9,7);
+for i = 1:9
+    [b(i,:),a(i,:)] = butter(3,[i*50-1 i*50+1]/500,'stop');
+    data_filtered = filtfilt(b(i,:),a(i,:),data_filtered);
+end
 
+%EEGローパス 100Hz
+[b_low,a_low] = butter(3,100/500,"low");
+data_low_filtered = filtfilt(b_low,a_low,data_filtered);
 
 %計測データの定義
 %EMGは1000μV→1Vなので、マイクロボルト単位に変換（1000倍）
 %EEGは100μV→1Vなので、マイクロボルト単位に変換（100倍）
 Force = data_filtered(:,1);
 EMG = data_filtered(:,7); %ここの*1000
-EEG_Cz = data_filtered(:,2)*100;
-EEG_FCz = data_filtered(:,3)*100;
-EEG_C1 = data_filtered(:,4)*100;
-EEG_CPz = data_filtered(:,5)*100;
-EEG_C2 = data_filtered(:,6)*100;
+EEG_Cz = data_low_filtered(:,2)*100;
+EEG_FCz = data_low_filtered(:,3)*100;
+EEG_C1 = data_low_filtered(:,4)*100;
+EEG_CPz = data_low_filtered(:,5)*100;
+EEG_C2 = data_low_filtered(:,6)*100;
  
 
 %EMGのトレンド除去（平均を引く）
@@ -194,8 +185,8 @@ ylabel('EMG PSD (\muV^2/Hz)','FontName','Arial','Fontsize',12);
 output_filename = sprintf('%s_CMC',subject_name);
 save(output_filename,'F','pEEG','pEMG','Coh',"CMCmax","CMCarea","PF");
 
-fileName = "result.txt";
-fileID = fopen(fileName, 'a'); %w:上書き a:末尾に追加
+% fileName = "result_filterd.txt";
+% fileID = fopen(fileName, 'a'); %w:上書き a:末尾に追加
 
 % %s:str型のデータ %f:浮動小数点
 fprintf(fileID, '%s CMCmax: %0.4f, PF: %2.0f, CMCarea: %0.4f\n', subject_name, CMCmax, PF, CMCarea);
