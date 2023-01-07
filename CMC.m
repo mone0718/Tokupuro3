@@ -11,14 +11,14 @@
 
 % ch1:Torque ch2~6:EEG(ch2がCz) ch7.8:EMG
 
-% EMG LP = 500 Hz, HP = 5 Hz
-% EEG LP = 200 Hz, HP = 0.5 Hz
+% EMG LP = 500 Hz, HP = 1 Hz
+% EEG LP = 100 Hz, HP = 0.5 Hz
 
 % EMG Sens HI (x1000)
 % EEG Sens Low (x1000)
 
 %被験者名
-defaultanswer = {'Egashira'};
+defaultanswer = {'Yokota'};
 subject = inputdlg({'subject'},'Input the answer',1,defaultanswer);
 subject_name = char(subject(1));
 
@@ -84,20 +84,21 @@ EEG = dEEG_Cz - (dEEG_FCz + dEEG_CPz + dEEG_C1 + dEEG_C2) / 4;
 %時間行列を作成
 time = 0:1/fs:length(Force)/fs-1/fs;
 
-figure('Position',[1 1 400 700]);
+
+figure('Position',[1 1 400 800]);
 subplot(4,1,1); %subplot(m,n,p):現在のFigureをm行n列のグリッドに分割し、pで指定された位置に図示
-plot(time,Force);
+plot(time,Force,'LineWidth',1.5);
 ylabel('Force (V)','FontName','Arial','Fontsize',12);
 xlabel('time (s)','FontName','Arial','Fontsize',12);
 
 subplot(4,1,2);
-plot(time,EMG,'LineWidth',1.5);
-ylabel('rEMG (\muV)','FontName','Arial','Fontsize',12);
+plot(time,rEMG,'LineWidth',1.5);
+ylabel('EMG (\muV)','FontName','Arial','Fontsize',12);
 xlabel('time (s)','FontName','Arial','Fontsize',12);
 
 subplot(4,1,3);
-plot(time,rEMG);
-ylabel('EMG (\muV)','FontName','Arial','Fontsize',12);
+plot(time,EMG,'LineWidth',1.5);
+ylabel('rEMG (\muV)','FontName','Arial','Fontsize',12);
 xlabel('time (s)','FontName','Arial','Fontsize',12);
 
 subplot(4,1,4);
@@ -108,16 +109,79 @@ xlabel('time (s)','FontName','Arial','Fontsize',12);
 %figureを閉じるまでプログラムが一時停止
 uiwait;
 
+raw_default_interval = {'50'};
+start_end_0 = inputdlg({'start'},'生データ区間を設定してください',1,raw_default_interval);
+second_raw_data_start = str2double(char(start_end_0(1)));
+second_raw_data_end = str2double(char(start_end_0(1)))+0.5;
+
+ms_raw_data_start = second_raw_data_start * fs + 1;
+ms_raw_data_end = second_raw_data_end * fs;
+
+original_force = Force;
+original_rEMG = rEMG;
+original_EMG = EMG;
+original_EEG = EEG;
+
+time = time(ms_raw_data_start:ms_raw_data_end);
+% Force = original_force(ms_raw_data_start:ms_raw_data_end);
+% rEMG = original_rEMG(ms_raw_data_start:ms_raw_data_end);
+EMG = original_EMG(ms_raw_data_start:ms_raw_data_end);
+EEG = original_EEG(ms_raw_data_start:ms_raw_data_end);
+
+% figure('Position',[1 1 400 800]);
+% defaultanswer = {'50'};
+% startend = inputdlg({'start'},'生データ開始時間',1,defaultanswer);
+% start_time = str2double(char(startend(1)));
+
+% rEMG = rEMG(start_time*fs+1:(start_time+0.5)*fs);
+% EEG = EEG(start_time*fs+1:(start_time+0.5)*fs); 
+
+interval_time = time - second_raw_data_start + 0.0000001;
+
+%uiwait;
+
+%%% EEG,EMGの生データ
+figure('Position',[1 1 500 500]);
+
+subplot(2,1,1);
+plot(interval_time,EEG,'LineWidth',2);
+xlim([0,0.5]);
+ylim([-12,12]);
+xticks(0:0.1:0.5);
+yticks([-12,0,12]);
+ylabel('EEG (\muV)','FontName','Arial');
+%xlabel('time (s)','FontName','Arial');
+
+fontsize = 22; 
+h = gca; 
+set(h,'fontsize',fontsize);
+
+subplot(2,1,2);
+plot(interval_time,EMG,'LineWidth',2);
+xlim([0,0.5]);
+ylim([-1000,1000]);
+xticks(0:0.1:0.5);
+yticks([-1000,0,1000]);
+ylabel('EMG (\muV)','FontName','Arial');
+xlabel('time (s)','FontName','Arial');
+
+fontsize = 22; 
+h = gca; 
+set(h,'fontsize',fontsize);
+
+uiwait;
+
+
 %解析対象区間を設定（解析のための60秒を選定）
 defaultanswer = {'15','75'};
 startend = inputdlg({'start','end'},'解析区間の60秒を設定してください',1,defaultanswer);
-start_time = str2num(char(startend(1)));
-end_time = str2num(char(startend(2)));
+start_time = str2double(char(startend(1)));
+end_time = str2double(char(startend(2)));
 
 %解析対象区間の60秒分のデータを切り出し
-Force = Force(start_time*fs+1:end_time*fs);
-rEMG = rEMG(start_time*fs+1:end_time*fs);
-EEG = EEG(start_time*fs+1:end_time*fs);
+Force = original_force(start_time*fs+1:end_time*fs);
+rEMG = original_rEMG(start_time*fs+1:end_time*fs);
+EEG = original_EEG(start_time*fs+1:end_time*fs);
 
 %コヒーレンス解析
 [Coh,F] = mscohere(EEG,rEMG,hanning(nfft),Overlap,nfft,fs);
@@ -136,27 +200,34 @@ SL=1-(0.05/((f_50-f_3)+1))^(1/(num_window-1));
 
 %CMCの定量評価
 %【課題④】15-35Hzのベータ帯におけるCMCの最大値（CMCmax）/その周波数（PF）を求める
-C = Coh(15:35); %配列の15番目から35番目まで抜き出す
-[CMCmax,pf] = max(C);
+beta_C = Coh(15:35); %配列の15番目から35番目まで抜き出す
+[CMCmax,pf] = max(beta_C);
 PF = pf + 13;
 
-%【課題⑤】15-35Hzのベータ帯におけるCMCの面積（CMCarea）を求める
-CMCarea = sum(C);
+%【課題⑤】15-35Hzのベータ帯におけるCMCの面積（(beta_)CMCarea）を求める
+CMCarea = sum(beta_C);
 
-%CMCの描画
-figure1 = figure('Position',[1 1 400 700]);
-subplot(3,1,1);
+
+%%% CMC,パワースペクトル
+figure1 = figure('Position',[1 1 500 700]);
+subplot(3,1,3);
 area(F,Coh);
 %有意線をグラフ内に描画
 hold on;
-plot(linspace(0,fs/2,length(time)),repmat(SL,1,length(time)),'r','LineWidth',0.5);
+plot(linspace(0,fs/2,length(time)),repmat(SL,1,length(time)),'r','LineWidth',1.5);
 hold off;
+
 xlim([0,50]);%50Hzまで描画
 ylim([0,0.6]);%上限は得られたデータによって適宜修正
-yticks(0:0.1:0.6);
-xlabel('Frequency(Hz)','FontName','Arial','Fontsize',12);
-ylabel('Coherence','FontName','Arial','Fontsize',12);
-title('CMC','FontName','Arial','Fontsize',20)
+yticks([0,0.6]);
+xlabel('Frequency(Hz)','FontName','Arial');
+ylabel('Coherence','FontName','Arial');
+title('CMC','FontName','Arial','FontSize',18);
+
+fontsize = 21; 
+h = gca; 
+set(h,'fontsize',fontsize);
+
 
 
 
@@ -164,29 +235,54 @@ title('CMC','FontName','Arial','Fontsize',20)
 pEEG = pwelch(EEG,hanning(nfft),Overlap,nfft,fs);
 pEMG = pwelch(rEMG,hanning(nfft),Overlap,nfft,fs);
 
+% %3-500HzにおけるEEG-PSD
+% C = Coh(3:50);
+% CMCarea = sum(C);
+
+%3-500HzにおけるEMG-PSD
+EMG_bPSD = sum(pEMG(15:35)) / sum(pEMG(3:500));
+
+%β-PSD
+%beta_PSD = beta_CMCarea / CMCarea;
+
+
 
 %【課題⑦】得られたEEGとEMGのスペクトルを描画して、CMCスペクトルと比較してみる
-subplot(3,1,2);
-plot(F,pEEG,'LineWidth',1);
+%figure('Position',[1 1 500 500]);
+subplot(2,1,1);
+plot(F,pEEG,'LineWidth',2);
 xlim([0,50]);
-ylim([0,0.16]);
-xlabel('Frequency(Hz)','FontName','Arial','Fontsize',12);
-ylabel('EEG PSD (\muV^2/Hz)','FontName','Arial','Fontsize',12);
+ylim([0,0.15]);
+%xlabel('Frequency(Hz)','FontName','Arial');
+ylabel(['EEG PSD', char(10), '(\muV^2/Hz)'],'FontName','Arial');
+title('EEG Power Spectral','FontName','Arial');
 
-subplot(3,1,3);
-plot(F,pEMG,'LineWidth',1);
+fontsize = 20; 
+h = gca; 
+set(h,'fontsize',fontsize);
+
+subplot(2,1,2);
+plot(F,pEMG,'LineWidth',2);
 xlim([0,50]);
-ylim([0,600]);
-xlabel('Frequency(Hz)','FontName','Arial','Fontsize',12);
-ylabel('EMG PSD (\muV^2/Hz)','FontName','Arial','Fontsize',12);
+ylim([0,500]);
+xlabel('Frequency(Hz)','FontName','Arial');
+ylabel(['EMG PSD', char(10), '(\muV^2/Hz)'],'FontName','Arial');
+title('EMG Power Spectral','FontName','Arial');
+
+fontsize = 20; 
+h = gca; 
+set(h,'fontsize',fontsize);
+%h.YLabel.FontSize = 26;
+
+
 
 
 %ファイルの保存
 output_filename = sprintf('%s_CMC',subject_name);
-save(output_filename,'F','pEEG','pEMG','Coh',"CMCmax","CMCarea","PF");
+save(output_filename,'F','pEEG','pEMG','Coh',"CMCmax","CMCarea","PF",'EMG_bPSD');
 
-% fileName = "result_filterd.txt";
-% fileID = fopen(fileName, 'a'); %w:上書き a:末尾に追加
+fileName = "result_.txt";
+fileID = fopen(fileName, 'a'); %w:上書き a:末尾に追加
 
 % %s:str型のデータ %f:浮動小数点
 fprintf(fileID, '%s CMCmax: %0.4f, PF: %2.0f, CMCarea: %0.4f\n', subject_name, CMCmax, PF, CMCarea);
